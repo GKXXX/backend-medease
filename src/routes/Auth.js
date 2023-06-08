@@ -9,10 +9,10 @@ const auth = async ({ app, db }) => {
       body:{email,password},
     } = req
 
-    const connectingMedecin = await db('medecins').select('id','encodedPassword','passwordSalt').where('email',"%" +email +"%" )
+    const connectingMedecin = await db('medecins').select('id','encodedPassword','passwordSalt').whereLike('email',"%" +email +"%" )
     const connectingUser = await db('clients').select('id','encodedPassword','passwordSalt').whereLike("email","%" +email +"%")
 
-    console.log(connectingUser)
+    console.log(connectingMedecin)
 
     if(connectingMedecin[0] != undefined) {
       if (HashPassword(password,connectingMedecin[0].passwordSalt)[0] === connectingMedecin[0].encodedPassword) {
