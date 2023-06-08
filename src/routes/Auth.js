@@ -10,28 +10,35 @@ const auth = async ({ app, db }) => {
     } = req
 
     const connectingMedecin = await db('medecins').select('id','encodedPassword','passwordSalt').where('email',"%" +email +"%" )
-    let connectingUser = await db('clients').select('id','encodedPassword','passwordSalt').whereLike("email","%" +email +"%")
+    const connectingUser = await db('clients').select('id','encodedPassword','passwordSalt').whereLike("email","%" +email +"%")
 
+    console.log(connectingUser)
 
     if(connectingMedecin[0] != undefined) {
-      if (HashPassword(password,connectingMedecin.passwordSalt)) {
+      if (HashPassword(password,connectingMedecin[0].passwordSalt)[0] === connectingMedecin[0].encodedPassword) {
         const token = jwt.sign(
           {
-            user_id:connectingMedecin.id,email,isMedecin:true
+            user_id:connectingMedecin[0].id,email,isMedecin:true
           },
           process.env.TOKEN_KEY,
           {expiresIn:"2h"})
         res.status(200).send(token)
+      } else {
+        res.status(404).send("Utilisateur introuvable")
       }
     } else if (connectingUser[0] != undefined){
-      if (HashPassword(password,connectingUser.passwordSalt)) {
+      console.log(HashPassword(password,connectingUser.passwordSalt)[0])
+      console.log(connectingUser.encodedPassword)
+      if (HashPassword(password,connectingUser[0].passwordSalt)[0] === connectingUser[0].encodedPassword) {
         const token = jwt.sign(
           {
-            user_id:connectingUser.id,email,isMedecin:true
+            user_id:connectingUser[0].id,email,isMedecin:true
           },
           process.env.TOKEN_KEY,
           {expiresIn:"2h"})
         res.status(200).send(token)
+      } else {
+        res.status(404).send("Utilisateur introuvable")
       }
     } else {
       res.status(404).send("Utilisateur introuvable")

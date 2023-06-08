@@ -53,16 +53,29 @@ const appointmentRoute = ({app,db}) => {
     }
   })
 
-  app.get("/appointments/creneaux",async (req,res) => {
-     const AppointmentModel = Appointment.bindKnex(db)
-     const listAppointments = await db('appointments').orderBy('dateAppointment')
+  function filtrerDoublons(tableauDate) {
+    return tableauDate.filter((date,index) => tableauDate.indexOf(date) === index)
+  }
 
-     const listJoursPris = await db('appointments').select('dateAppointment')
-     console.log(listJoursPris)
-     listJoursPris.map((element) => {
-      element.dateAppointment = element.dateAppointment.toISOString().split("T")[0]
-     }).filter((date,index) => listJoursPris.indexOf(date) === index)
-     console.log(listJoursPris)
+  app.get("/appointments/creneaux",async (req,res) => {
+     let listAppointments = await db('appointments').orderBy('dateAppointment')
+
+     let listJoursPris = await db('appointments').select('dateAppointment')
+     listJoursPris = listJoursPris.map((element) => {
+      return new Date(element.dateAppointment.toISOString  ().split("T")[0]).toISOString()
+     })
+     listJoursPris = filtrerDoublons(listJoursPris)
+
+     let arrayToSend = Array()
+
+     for (let i = 0; i <= listJoursPris.length;i++) {
+      for (let j = 0; j <= listAppointments.length;j++) {
+
+      }
+     }
+     
+     
+     
 
      if (result) {
       res.status(200).send(result)
