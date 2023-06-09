@@ -28,14 +28,30 @@ const appointmentRoute = ({app,db}) => {
       params:{idClient},
     } = req
 
-    const AppointmentModel = Appointment.bindKnex(db)
-    const result = await db("appointments").where('idClient',idClient)
+    const result = await db('appointments')
+    .innerJoin('medecins','appointments.idMedecin','medecins.id')
+    .innerJoin('specialisations','medecins.idSpecialisation','specialisations.id')
+    .select('appointments.id',
+    'appointments.motif',
+    'appointments.description',
+    'appointments.idClient',
+    'appointments.dateAppointment',
+    'appointments.idRoom',
+    'medecins.firstName',
+    'medecins.lastName',
+    'medecins.email',
+    'medecins.phone',
+    'medecins.idSpecialisation',
+    'specialisations.label')
+    .where('appointments.idClient',idClient)
 
-    if (result) {
+    console.log(result)
+
+    //if (result) {
       res.send(result)
-    } else {
+    /** } else {
       res.status(404).send()
-    }
+    }*/
   })
 
   app.get("/appointments/medecins/:idMedecin",auth,async (req,res) => {

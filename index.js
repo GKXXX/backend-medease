@@ -3,7 +3,6 @@ const morgan = require("morgan");
 const { Model } = require("objection");
 const Knex = require("knex");
 const knexfilejs = require("./knexfile");
-const axios = require("axios");
 const buildingRoute = require("./src/routes/BuildingRoute");
 const clientsRoute = require("./src/routes/ClientsRoute");
 const practicienRoute = require("./src/routes/PracticienRoute");
