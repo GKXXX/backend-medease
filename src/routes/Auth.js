@@ -12,7 +12,6 @@ const auth = async ({ app, db }) => {
     const connectingMedecin = await db('medecins').select('id','encodedPassword','passwordSalt').whereLike('email',"%" +email +"%" )
     const connectingUser = await db('clients').select('id','encodedPassword','passwordSalt').whereLike("email","%" +email +"%")
 
-    console.log(connectingMedecin)
 
     if(connectingMedecin[0] != undefined) {
       if (HashPassword(password,connectingMedecin[0].passwordSalt)[0] === connectingMedecin[0].encodedPassword) {
@@ -27,8 +26,6 @@ const auth = async ({ app, db }) => {
         res.status(404).send("Utilisateur introuvable")
       }
     } else if (connectingUser[0] != undefined){
-      console.log(HashPassword(password,connectingUser.passwordSalt)[0])
-      console.log(connectingUser.encodedPassword)
       if (HashPassword(password,connectingUser[0].passwordSalt)[0] === connectingUser[0].encodedPassword) {
         const token = jwt.sign(
           {

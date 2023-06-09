@@ -69,8 +69,9 @@ const appointmentRoute = ({app,db}) => {
      let arrayToSend = Array()
 
      for (let i = 0; i <= listJoursPris.length;i++) {
+      arrayToSend.push({"jour":listJoursPris.get(i).dateAppointment,"listAppointment":Array()})
       for (let j = 0; j <= listAppointments.length;j++) {
-
+        
       }
      }
      
@@ -84,10 +85,26 @@ const appointmentRoute = ({app,db}) => {
      }
     })
 
+
+
   app.get("/appointments",async (req,res) => {
     const appointments = await db('appointments')
+    .innerJoin('medecins','appointments.idMedecin','medecins.id')
+    .innerJoin('specialisations','medecins.idSpecialisation','specialisations.id')
+    .select('appointments.id',
+    'appointments.motif',
+    'appointments.description',
+    'appointments.idClient',
+    'appointments.dateAppointment',
+    'appointments.idRoom',
+    'medecins.firstName',
+    'medecins.lastName',
+    'medecins.email',
+    'medecins.phone',
+    'medecins.idSpecialisation',
+    'specialisations.label')
 
-    res.send(appointments)
+    res.status(200).send(appointments)
   })
 }
 
